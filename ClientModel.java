@@ -15,24 +15,48 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
 import java.io.Serializable;
-
+import java.awt.Point;
 import java.util.*;
+import java.io.*;
 
 public class ClientModel{
 	
 	private User currentUser;
-	
-	@SuppressWarnings("unused")
 	private Location currentLocation;
 	private Server remoteObj;
-	
+	private ArrayList<Point> locationPoints;
 	private Date loginDateTime;
+	
 	
 	public ClientModel()
 	{
 		initRMI();
-		
+		initLocationsCoordinates();
 		loginDateTime = new Date();
+	}
+	
+	private void initLocationsCoordinates()
+	{
+		locationPoints = new ArrayList<Point>();
+		try {
+            FileReader fr = new FileReader("resources/data/points.txt");
+            BufferedReader br = new BufferedReader(fr);
+
+            String myReadline;
+			String[] points;
+            while (br.ready()) {
+                myReadline = br.readLine();
+				points = myReadline.split(" ");
+				Point point = new Point(Integer.parseInt(points[0]), Integer.parseInt(points[1]));
+				locationPoints.add(point);
+            }
+			
+			br.close();
+            fr.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	private void initRMI()
@@ -60,6 +84,11 @@ public class ClientModel{
 	     {
 	         System.out.println("NotBound: " + exc.toString());
 	     }
+	}
+	
+	public ArrayList<Point> getLocationPoints()
+	{
+		return locationPoints;
 	}
 	
 	public Date getLoginDateTime()
@@ -111,7 +140,7 @@ public class ClientModel{
 	    }
 	}
 	
-	public void initLocation(int id)
+	public void setLocation(int id)
 	{
 		try
 		{

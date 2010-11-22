@@ -17,8 +17,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener; 
-
-
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener; 
+import java.awt.Point;
 
 //networking packages
 import java.net.InetAddress;
@@ -26,7 +27,9 @@ import java.net.InetAddress;
 //Time & Timer
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.*;
+import java.util.*;
+
+import java.lang.Math;
 
 public class ClientController {
 	
@@ -34,6 +37,7 @@ public class ClientController {
 	private ClientModel m_Model;
 	private ClientMainFrame m_View;
 	private static int usersSize = 0;
+	private static double distance_Threshold = 8.0;
 	
 	//constructor
 	public ClientController(ClientModel model, ClientMainFrame view)
@@ -128,8 +132,58 @@ public class ClientController {
 			}
 		});
 		
+		m_View.addWindowMouseListener(new MouseListener() {
+		
+			public void mousePressed(MouseEvent e) {
+				
+			}
+
+			public void mouseReleased(MouseEvent e) {
+			   
+			}
+
+			public void mouseEntered(MouseEvent e) {
+			   
+			}
+
+			public void mouseExited(MouseEvent e) {	
+			  
+			}
+
+			public void mouseClicked(MouseEvent e) {
+				Point currentPoint = e.getPoint();
+				
+				for(int i = 0; i < m_Model.getLocationPoints().size(); i++)
+				{
+					if(getDistance(currentPoint, m_Model.getLocationPoints().get(i)) <= distance_Threshold)
+					{
+						m_Model.setLocation(i + 1);
+						m_View.cleanScene();
+						m_View.update3DView(m_Model.getCurrentLocation());
+						System.out.println("Location " + i + " clicked.");
+					}				
+				}
+			}
+		});
+		
+		
 		Timer timer = new Timer();
 		timer.schedule(new RemindTask(m_View, m_Model), 0, 1 * 1000); //subsequent rate
+	}
+	
+	
+	private double getDistance(Point p1, Point p2)
+	{
+		double distance = 0;
+		
+		double x1 = p1.getX();
+		double y1 = p1.getY();
+		double x2 = p2.getX();
+		double y2 = p2.getY();
+		
+		distance = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+		
+		return distance;
 	}
 	
 	private void initModel()
@@ -144,7 +198,7 @@ public class ClientController {
 		}
 		
 		//init location with id=1
-		m_Model.initLocation(1);
+		m_Model.setLocation(1);
 	}
 	
 	private void initView()

@@ -12,6 +12,7 @@
  
  /* Java UI packages & Events*/
 import java.awt.EventQueue;
+import java.awt.Frame;
 import javax.swing.JFrame;
 import java.awt.Canvas;
 import javax.swing.JPanel;
@@ -47,7 +48,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener; ; 
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener; ; 
 
 /* Java3d packages */
 import com.sun.j3d.utils.applet.MainFrame;
@@ -83,10 +86,14 @@ public class ClientMainFrame extends JFrame{
 	private JTextField textField_Name;
 	private JButton btnEditName;
 	private JButton btnSave;
-	private JTextArea textArea_OnlineUses;	
+	private JTextArea textArea_OnlineUses;
+	private JLabel label_2DCampus;
+	
+	/*3D things here*/
+	private SimpleUniverse simpleU;
+	private BranchGroup scene;
 	
 	public ClientMainFrame(ClientModel model) {
-		
 		clientModel = model;
 		onlineUsersTableModel = new DefaultTableModel();
 		
@@ -102,6 +109,7 @@ public class ClientMainFrame extends JFrame{
 		 ************* 2D View ***************** 
 		 ***************************************/
 		//init the main frame
+		setResizable(false);
 		setTitle("Virtual Campus Tour System");
 		setBounds(100, 100, 900, 700);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -169,7 +177,7 @@ public class ClientMainFrame extends JFrame{
 		onlineUsersScrollPane.setViewportView(textArea_OnlineUses);
 		
 		//add 2D campus label and let it fixs the label size
-		JLabel label_2DCampus = new JLabel("");
+		label_2DCampus = new JLabel("");
 		label_2DCampus.setBounds(0, 407, 611, 255);
 		ImageIcon campus = new ImageIcon("resources/imgs/campus.jpg");
 		campus.setImage(campus.getImage().getScaledInstance(label_2DCampus.getWidth(), label_2DCampus.getHeight(), Image.SCALE_DEFAULT));
@@ -214,18 +222,37 @@ public class ClientMainFrame extends JFrame{
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		panel_Message.add(scrollPane);
 		
+		/***************************************
+		 ************* 3D View ***************** 
+		 ***************************************/
+		//3D View 
+		panel_3DView.setLayout(new BorderLayout());
+		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+		Canvas3D canvas3D = new Canvas3D(config);
+		panel_3DView.add("Center", canvas3D);
+		
+		// Create a 3d universe
+		simpleU = new SimpleUniverse(canvas3D);
+		TransformGroup vtg = simpleU.getViewingPlatform().getViewPlatformTransform();
+		Transform3D moveInside = new Transform3D();
+		moveInside.setTranslation(new Vector3f(0.0f, -0.15f, 0.3f));
+		vtg.setTransform(moveInside);
+			
 	}
 	
 	
 	
 	//return the root of 3D scene
-	public BranchGroup createSceneGraph(JPanel panel_3DView, Location currentLocation) {
+	public BranchGroup createSceneGraph(Location currentLocation) {
 	
 		ArrayList<byte[]> currentImages = new ArrayList<byte[]>();
 		currentImages = currentLocation.getLocationImages();
 		
 		// Create the root of the branch graph
 		BranchGroup objRoot = new BranchGroup();
+		
+		//enable this Scene to be removed from its parent which is SimpleU
+		objRoot.setCapability( BranchGroup.ALLOW_DETACH );
 	
 		// Create a transformation node for cube transformation
 		TransformGroup trans = new TransformGroup();
@@ -307,7 +334,6 @@ public class ClientMainFrame extends JFrame{
     	// Add y axis rotation matrix to root
     	objRoot.addChild(myRotationBehavior);
 		
-		
 		/* Disable the translation and scalation*/
 		/*
 		// Cube translation
@@ -365,6 +391,12 @@ public class ClientMainFrame extends JFrame{
 		textField_Message.addActionListener(cal);
 	}
 	
+	public void addWindowMouseListener(MouseListener cal)
+	{
+		label_2DCampus.addMouseListener(cal);
+	}
+	
+	
 	public String getMessageInput()
 	{
 		return textField_Message.getText();
@@ -373,7 +405,7 @@ public class ClientMainFrame extends JFrame{
 	public void updateNameTextField(String str)
 	{
 		textField_Name.setText(str);
-	}
+	}
 	
 	//udpate message table
 	public void udpateMessageTable(Date loginDateTime, ArrayList<Message> messages)
@@ -402,30 +434,19 @@ public class ClientMainFrame extends JFrame{
 		
 		textArea_OnlineUses.setText(userNames);				
 	}
+
+	//clean the scene for repainting later 
+	public void cleanScene()
+	{
+		scene.detach();	
+	}
+		
 	
 	public void update3DView(Location currentLocation)
 	{
-		/***************************************
-		 ************* 3D View ***************** 
-		 ***************************************/
-		//3D View 
-		panel_3DView.setLayout(new BorderLayout());
-		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-		Canvas3D canvas3D = new Canvas3D(config);
-		panel_3DView.add("Center", canvas3D);
 		// Create a simple scene and attach it to the virtual universe
-		BranchGroup scene = createSceneGraph(panel_3DView, currentLocation);
-		
-		// Create a 3d universe
-		SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
-		
-		/* Set the camera's initial position */
-		//simpleU.getViewingPlatform().setNominalViewingTransform(); //default position
-		TransformGroup vtg = simpleU.getViewingPlatform().getViewPlatformTransform();
-		Transform3D moveInside = new Transform3D();
-		moveInside.setTranslation(new Vector3f(0.0f, -0.15f, 0.3f));
-		vtg.setTransform(moveInside);
-		
+		scene = createSceneGraph(currentLocation);
+
 		// Add the scene to the 
 		simpleU.addBranchGraph(scene);
 	}

@@ -16,6 +16,7 @@ import java.io.File;
 import java.awt.*;  
 import java.awt.image.BufferedImage;  
 import java.io.*;
+import java.net.*;
 
 
 
@@ -43,7 +44,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     
     public int generateUserId()
     {
-    	System.out.println("userId Flag: " + userIdFlag);
+    	System.out.println("New user with id: " + userIdFlag + " initialized..");
 		return userIdFlag++;
     }
 	
@@ -243,14 +244,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 				baos.close();
 				
 				imgs.add(imageInByte);
+					
 			}
 			catch(Exception e)
 			{
-				System.out.println("in initMages() in Location.java");
+				
 				e.printStackTrace();
 			}
 		}
-		
+				
+		System.out.println("Images transfered....");
 		return imgs;
 	}
 
@@ -267,8 +270,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         	System.setSecurityManager(new RMISecurityManager());
 
 			//create a local instance of the object
-			ServerImpl Server = new ServerImpl();
-
+			ServerImpl Server = new ServerImpl();			
+			
 			//put the local instance in the registry
 			Naming.rebind("//localhost/SERVER" , Server);
 
