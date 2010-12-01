@@ -1,0 +1,7 @@
+original    modified
+B6                1
+B1                0
+B2                5
+B3                4
+B4+180            2
+B5                3

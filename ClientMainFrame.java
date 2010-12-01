@@ -115,11 +115,13 @@ public class ClientMainFrame extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 		
+		
 		//add the user info panel
 		JPanel panel_Info = new JPanel();
 		panel_Info.setBounds(621, 0, 253, 105);
 		getContentPane().add(panel_Info);
 		panel_Info.setLayout(null);
+		
 		
 		//add a vatar 
 		JLabel label_Avatar = new JLabel("");
@@ -235,7 +237,8 @@ public class ClientMainFrame extends JFrame{
 		simpleU = new SimpleUniverse(canvas3D);
 		TransformGroup vtg = simpleU.getViewingPlatform().getViewPlatformTransform();
 		Transform3D moveInside = new Transform3D();
-		moveInside.setTranslation(new Vector3f(0.0f, -0.15f, 0.3f));
+	//	moveInside.setTranslation(new Vector3f(0.0f, -0.15f, 0.3f));
+		moveInside.setTranslation(new Vector3f(0.0f, 0.0f, 0.6f));
 		vtg.setTransform(moveInside);
 			
 	}
