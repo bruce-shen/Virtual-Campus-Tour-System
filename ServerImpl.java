@@ -202,6 +202,24 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 		}
     }
     
+    public void changeUserLocation(int userId, int locationid)
+    {
+    	for(int i = 0; i < users.size(); i++)
+    	{
+    		if(users.get(i).getUserId() == userId)
+    		{
+    			users.get(i).setCurrentLocationId(locationid);
+    			break;
+    		}
+    	}
+		
+		//once changed name, call all users to update online users list
+		for(int i = 0; i < onlineUsersListStatuses.size(); i++)
+		{
+			onlineUsersListStatuses.set(i, "1");
+		}
+    }
+    
     //get all users's info
     public ArrayList<User> getAllUsers()
     {

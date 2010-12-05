@@ -46,5 +46,7 @@ public interface Server extends Remote {
 	
 	public String getMessageStatus(String userId) throws RemoteException;
 	
+	public void changeUserLocation(int userId, int locationid) throws RemoteException;
+	
     
 }

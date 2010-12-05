@@ -11,12 +11,20 @@
 public class User implements Serializable{
 	private int userId;
 	private String userName;
+	private int currentLocationId;
 	
 	public User(){}
 	
     public User(int id, String aName) {
     	userId = id;
     	userName = aName;
+    	currentLocationId = 1;
+    }
+    
+    public User(int id, String aName, int locationId) {
+    	userId = id;
+    	userName = aName;
+    	currentLocationId = locationId;
     }
     
     /*gets functions*/
@@ -28,6 +36,16 @@ public class User implements Serializable{
     public String getUserName()
     {
     	return userName;
+    }
+    
+    public int getCurrentLocationId()
+    {
+    	return currentLocationId;
+    }
+    
+    public void setCurrentLocationId(int id)
+    {
+    	currentLocationId = id;
     }
     
     /*sets functiosn*/

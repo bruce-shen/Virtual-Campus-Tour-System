@@ -25,6 +25,7 @@ public class ClientModel{
 	private Location currentLocation;
 	private Server remoteObj;
 	private ArrayList<Point> locationPoints;
+	private ArrayList<String> locationNames;
 	private Date loginDateTime;
 	
 	
@@ -32,7 +33,30 @@ public class ClientModel{
 	{
 		initRMI();
 		initLocationsCoordinates();
+		initLocationNames();
 		loginDateTime = new Date();
+	}
+	
+	private void initLocationNames()
+	{
+		locationNames = new ArrayList<String>();
+		try {
+            FileReader fr = new FileReader("resources/data/locationNames.txt");
+            BufferedReader br = new BufferedReader(fr);
+
+            String myReadline;
+			String[] points;
+            while (br.ready()) {
+                myReadline = br.readLine();
+				locationNames.add(myReadline);
+            }
+			
+			br.close();
+            fr.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	private void initLocationsCoordinates()
@@ -91,6 +115,11 @@ public class ClientModel{
 		return locationPoints;
 	}
 	
+	public ArrayList<String> getLocationNames()
+	{
+		return locationNames;
+	}
+	
 	public Date getLoginDateTime()
 	{
 		return loginDateTime;
@@ -133,6 +162,19 @@ public class ClientModel{
 		{
 			currentUser.setUserName(name);
 			remoteObj.changeUserName(id, name);
+		}
+		catch (Exception e)
+	    {
+			e.printStackTrace();  
+	    }
+	}
+	
+	public void updateUserLocation(int locationId)
+	{
+		try
+		{
+			currentUser.setCurrentLocationId(locationId);
+			remoteObj.changeUserLocation(currentUser.getUserId(), locationId);
 		}
 		catch (Exception e)
 	    {
@@ -299,4 +341,6 @@ public class ClientModel{
 	{
 		return remoteObj;
 	}
+	
+
 }

@@ -13,20 +13,23 @@
  //events hander packages
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener; 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener; 
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseWheelEvent;
 import java.awt.Point;
 
 //networking packages
 import java.net.InetAddress;
 
 //Time & Timer
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.*;
 
 import java.lang.Math;
@@ -38,6 +41,13 @@ public class ClientController {
 	private ClientMainFrame m_View;
 	private static int usersSize = 0;
 	private static double distance_Threshold = 8.0;
+	private static double previous_x = 0;
+	private static double previous_y = 0;
+	
+	private static double previous_rotation_angle = 0;
+	private static double previous_camera_angle = 0;
+	private static double delta_x = 0;
+	private static double delta_y = 0;
 	
 	//constructor
 	public ClientController(ClientModel model, ClientMainFrame view)
@@ -132,23 +142,16 @@ public class ClientController {
 			}
 		});
 		
-		m_View.addWindowMouseListener(new MouseListener() {
+		m_View.addMapMouseListener(new MouseListener() {
 		
-			public void mousePressed(MouseEvent e) {
-				
-			}
+			public void mousePressed(MouseEvent e) {}
 
-			public void mouseReleased(MouseEvent e) {
-			   
-			}
+			public void mouseReleased(MouseEvent e) {}
 
 			public void mouseEntered(MouseEvent e) {
-			   
 			}
 
-			public void mouseExited(MouseEvent e) {	
-			  
-			}
+			public void mouseExited(MouseEvent e) {}
 
 			public void mouseClicked(MouseEvent e) {
 				Point currentPoint = e.getPoint();
@@ -157,11 +160,82 @@ public class ClientController {
 				{
 					if(getDistance(currentPoint, m_Model.getLocationPoints().get(i)) <= distance_Threshold)
 					{
-						m_Model.setLocation(i + 1);
-						m_View.cleanScene();
-						m_View.update3DView(m_Model.getCurrentLocation());
-						System.out.println("Location " + i + " clicked.");
-					}				
+						if(e.getButton() == MouseEvent.BUTTON1)
+						{
+							m_Model.setLocation(i + 1);
+							m_Model.updateUserLocation(i + 1);
+							m_View.cleanScene();
+							m_View.update3DView(m_Model.getCurrentLocation());
+							previous_rotation_angle = 0;
+							previous_camera_angle = 0;
+							System.out.println("Location " + i + " clicked.");
+						}
+						else if(e.getButton() == MouseEvent.BUTTON3)
+						{
+							System.out.println("right click, showing info.");
+							m_View.displayLocationInfo(m_Model.getLocationPoints().get(i), m_Model.getLocationNames().get(i), i, m_Model.getOnlineUserNames());
+						}
+						break;
+					}
+					else
+					{
+						m_View.clearLocationInfo();
+					}
+				}
+			}
+		});
+		
+		m_View.add3DMouseMotionListener(new MouseMotionListener(){
+			 public void mouseMoved(MouseEvent e) {}
+
+			    public void mouseDragged(MouseEvent e) {
+			    	
+			    	Point currentPoint = e.getPoint(); 
+					double current_x = currentPoint.getX();
+					double current_y = currentPoint.getY();
+					
+					delta_x = current_x - previous_x;
+					delta_y = current_y - previous_y;
+					
+					m_View.rotate(previous_rotation_angle + delta_x);
+					m_View.cameraChangeAngle(previous_camera_angle + delta_y);
+				}
+			    	    
+		});
+		
+		m_View.add3DMouseListener(new MouseListener(){
+			public void mousePressed(MouseEvent e) {
+				Point currentPoint = e.getPoint();
+				previous_x = currentPoint.getX();
+				previous_y = currentPoint.getY();
+
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				previous_rotation_angle += delta_x;
+				previous_camera_angle += delta_y;
+			}
+
+			public void mouseEntered(MouseEvent e) {}
+
+			public void mouseExited(MouseEvent e) {}
+
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+		});
+		
+		m_View.add3DMouseWheelListener(new MouseWheelListener(){
+			public void mouseWheelMoved(MouseWheelEvent e)
+			{
+				int notches = e.getWheelRotation();
+				if(notches < 0)
+				{
+					m_View.changeViewAngle(-1);
+				}
+				else
+				{
+					m_View.changeViewAngle(1);
 				}
 			}
 		});
@@ -204,7 +278,7 @@ public class ClientController {
 	private void initView()
 	{
 		m_View.updateNameTextField(m_Model.getCurrentUser().getUserName());
-		m_View.updateOnlineUsers(m_Model.getOnlineUserNames());
+		m_View.updateOnlineUsers(m_Model.getOnlineUserNames(), m_Model.getLocationNames());
 		m_View.update3DView(m_Model.getCurrentLocation());
 	}
 	
@@ -226,8 +300,11 @@ class RemindTask extends TimerTask {
 		//check if need to update online users list
 		if(model.getOnlineUsersListStatus().equals("1"))
 		{
-			view.updateOnlineUsers(model.getOnlineUserNames());
+			view.updateOnlineUsers(model.getOnlineUserNames(), model.getLocationNames());
 			model.setOnlineUsersListStatus("0");
+			
+			//update users location on 2D map
+			
 		}
 
 		//check if need to update message list
