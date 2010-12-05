@@ -139,6 +139,28 @@ public class ClientController {
 			}
 		});
 		
+		m_View.addMapMouseMotionListener(new MouseMotionListener(){
+			 public void mouseMoved(MouseEvent e) {
+				 Point currentPoint = e.getPoint();
+					
+				 for(int i = 0; i < m_Model.getLocationPoints().size(); i++)
+				 {
+					 if(getDistance(currentPoint, m_Model.getLocationPoints().get(i)) <= distance_Threshold)
+					 {
+						 System.out.println("Location " + i + 1);
+					 	 m_View.change2DMap(i + 1);
+						 break;
+					 }
+					 else
+					 {
+						 m_View.change2DMap(0);
+					 }
+				 }	
+			  }
+
+			  public void mouseDragged(MouseEvent e) {}
+		});
+		
 		m_View.addMapMouseListener(new MouseListener() {
 		
 			public void mousePressed(MouseEvent e) {}
@@ -146,6 +168,8 @@ public class ClientController {
 			public void mouseReleased(MouseEvent e) {}
 
 			public void mouseEntered(MouseEvent e) {
+				
+				
 			}
 
 			public void mouseExited(MouseEvent e) {}

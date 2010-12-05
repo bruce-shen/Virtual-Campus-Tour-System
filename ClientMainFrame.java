@@ -208,7 +208,7 @@ public class ClientMainFrame extends JFrame{
 		//add 2D campus label and let it fixs the label size
 		label_2DCampus = new JLabel("");
 		label_2DCampus.setBounds(0, 407, 611, 255);
-		ImageIcon campus = new ImageIcon("resources/imgs/campus.jpg");
+		ImageIcon campus = new ImageIcon("resources/imgs/0.jpg");
 		campus.setImage(campus.getImage().getScaledInstance(label_2DCampus.getWidth(), label_2DCampus.getHeight(), Image.SCALE_DEFAULT));
 		label_2DCampus.setIcon(campus);
 		getContentPane().add(label_2DCampus);
@@ -492,6 +492,11 @@ public class ClientMainFrame extends JFrame{
 		label_2DCampus.addMouseListener(cal);
 	}
 	
+	public void addMapMouseMotionListener(MouseMotionListener cal)
+	{
+		label_2DCampus.addMouseMotionListener(cal);
+	}
+	
 	public void add3DMouseMotionListener(MouseMotionListener cal)
 	{
 		canvas.addMouseMotionListener(cal);
@@ -617,6 +622,13 @@ public class ClientMainFrame extends JFrame{
 	public void update3DView(Location currentLocation)
 	{
 		setContent(currentLocation);
+	}
+	
+	public void change2DMap(int mapId)
+	{
+		ImageIcon campus = new ImageIcon("resources/imgs/" + mapId + ".jpg");
+		campus.setImage(campus.getImage().getScaledInstance(label_2DCampus.getWidth(), label_2DCampus.getHeight(), Image.SCALE_DEFAULT));
+		label_2DCampus.setIcon(campus);
 	}
 }
 
