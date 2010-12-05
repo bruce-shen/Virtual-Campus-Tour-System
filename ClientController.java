@@ -100,9 +100,6 @@ public class ClientController {
 				//tell model to update username
 				m_Model.changeUserName(m_Model.getCurrentUser().getUserId(), m_View.getNewName());
 				
-				//tell view to update onlineusers list
-				//m_View.updateOnlineUsers(m_Model.getOnlineUserNames());
-				
 				//disable the name editing
 				m_View.enableNameDiting(false);
             }
@@ -168,11 +165,9 @@ public class ClientController {
 							m_View.update3DView(m_Model.getCurrentLocation());
 							previous_rotation_angle = 0;
 							previous_camera_angle = 0;
-							System.out.println("Location " + i + " clicked.");
 						}
 						else if(e.getButton() == MouseEvent.BUTTON3)
 						{
-							System.out.println("right click, showing info.");
 							m_View.displayLocationInfo(m_Model.getLocationPoints().get(i), m_Model.getLocationNames().get(i), i, m_Model.getOnlineUserNames());
 						}
 						break;
@@ -245,7 +240,7 @@ public class ClientController {
 		timer.schedule(new RemindTask(m_View, m_Model), 0, 1 * 1000); //subsequent rate
 	}
 	
-	
+	// Calculate distance between two points
 	private double getDistance(Point p1, Point p2)
 	{
 		double distance = 0;
@@ -260,6 +255,7 @@ public class ClientController {
 		return distance;
 	}
 	
+	// Init model
 	private void initModel()
 	{
 		//init name with IP
@@ -284,6 +280,8 @@ public class ClientController {
 	
 }
 
+
+// an inner class for timer functions
 class RemindTask extends TimerTask {
 	
 	private ClientMainFrame view;
@@ -302,9 +300,6 @@ class RemindTask extends TimerTask {
 		{
 			view.updateOnlineUsers(model.getOnlineUserNames(), model.getLocationNames());
 			model.setOnlineUsersListStatus("0");
-			
-			//update users location on 2D map
-			
 		}
 
 		//check if need to update message list

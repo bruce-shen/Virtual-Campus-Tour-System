@@ -80,6 +80,7 @@ import java.io.*;
 
 public class ClientMainFrame extends JFrame{
 
+	/* 2D components */
 	private ClientModel clientModel;
 	private JTextField textField_Message;
 	private JButton btnSubmit;
@@ -91,7 +92,6 @@ public class ClientMainFrame extends JFrame{
 	private JButton btnSave;
 	private JTextArea textArea_OnlineUses;
 	private JLabel label_2DCampus;
-	
 	private JScrollPane locationInfoScrollPane;
 	private JTextArea locationNamesTextArea;
 	
@@ -114,7 +114,7 @@ public class ClientMainFrame extends JFrame{
 	private Canvas3D canvas; // Drawing canvas for 3D rendering
 	private Bounds bounds;  //bounding
 	
-	
+	/* Static variables*/
 	private static double cameraAngle = 0;
 	private static double rotationAngle = 0;
 	private static double tmpAngle = 0;
@@ -311,8 +311,12 @@ public class ClientMainFrame extends JFrame{
 	 	{ 
 	 		try
 			{
+	 			// Get one texture image
 				InputStream in = new ByteArrayInputStream(currentImages.get(i));
+				
+				// Setup a texture loader
 				TextureLoader myloader = new TextureLoader(ImageIO.read(in), panel_3DView);
+				
 				// Create texture
 				Texture2D mytext=(Texture2D) myloader.getTexture();
 					
@@ -353,36 +357,6 @@ public class ClientMainFrame extends JFrame{
 			
 		// Add the cube to trans	
 		contentsTransGr.addChild(box);
-
-		/****mouse events*****/		
-		/* Cube rotation */
-//		MouseRotate myMouseRotate = new MouseRotate();
-//		myMouseRotate.setTransformGroup(contentsTransGr);
-//		myMouseRotate.setSchedulingBounds(new BoundingSphere());
-		
-//		Transform3D newTransform = new Transform3D();
-//		contentsTransGr.getTransform(newTransform);
-//		Matrix4f newMatrix = new Matrix4f();
-//		//newTransform.get(newMatrix);
-//		newMatrix.rotZ(0);
-//		newTransform.set(newMatrix);
-//		
-//		myMouseRotate.transformChanged(newTransform);
-		//contentBranch.addChild(myMouseRotate);
-		
-//		// Rotate by x axis
-//		double yFactor = myMouseRotate.getYFactor();
-//		myMouseRotate.setFactor(0, yFactor);
-//			
-//		// Add x axis rotation matrix to root
-//		contentBranch.addChild(myMouseRotate);
-//			
-//		// Create a keyboard event for rotating by y axis
-//		SimpleBehavior myRotationBehavior = new SimpleBehavior(contentsTransGr);
-//	   	myRotationBehavior.setSchedulingBounds(new BoundingSphere());
-//	    	
-//	   	// Add y axis rotation matrix to root
-//	   	contentBranch.addChild(myRotationBehavior);
 			
 	   	// Compiling the branch graph before making it live
 	    contentBranch.compile();
@@ -392,6 +366,7 @@ public class ClientMainFrame extends JFrame{
 	 
 	}
 	
+	// Set 3D's viewing
 	private void setViewing()
 	{
 		// Creating the viewing branch
@@ -437,7 +412,7 @@ public class ClientMainFrame extends JFrame{
 	} 
 	
 	
-	
+	// Change the camera's lookAt angle
 	public void changeViewAngle(int increaseView)
 	{
 		Transform3D tt = new Transform3D();
@@ -455,6 +430,7 @@ public class ClientMainFrame extends JFrame{
 	    view.setLeftProjection(tt);
 	}
 	
+	// Rotate the cube with a given angel
 	public void rotate(double angle)
 	{
 		Transform3D tmp = new Transform3D();	
@@ -540,8 +516,6 @@ public class ClientMainFrame extends JFrame{
 	{
 		textField_Name.setText(str);
 	}
-
-	
 	//udpate message table
 	public void udpateMessageTable(Date loginDateTime, ArrayList<Message> messages)
 	{
@@ -573,36 +547,39 @@ public class ClientMainFrame extends JFrame{
 
 	public void displayLocationInfo(Point point, String locationName, int locationId, ArrayList<User> users)
 	{	
+		// Remove the scroll panel first
 		if(locationInfoScrollPane != null)
 		{
 			this.label_2DCampus.remove(locationInfoScrollPane);
 		}
 		
+		// Set scroll panel's position and size
 		int draw_x = (int)point.getX();
 		int draw_y = (int)point.getY();
 		if(point.getX() >= 400)
 		{
 			draw_x = 400;
 		}
-
 		locationInfoScrollPane = new JScrollPane((Component) null);
 		locationInfoScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		locationInfoScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		locationInfoScrollPane.setBounds(draw_x, draw_y, 200, 100);
 		
+		// Add info(locationName and usrs who are online)
 		locationNamesTextArea = new JTextArea();
 		String textToShow = locationName + "\n" + "-----------------------------------------\n" 
 										 + "Who's here:\n";
 		
-		
+		// Get who is online
 		for(int i = 0; i < users.size(); i++)
 		{
-			System.out.println("users locatonId: " + users.get(i).getCurrentLocationId() + ", parser: " + locationId);
 			if(users.get(i).getCurrentLocationId() == locationId + 1)
-			textToShow += users.get(i).getUserName() + "\n";
+			{
+				textToShow += users.get(i).getUserName() + "\n";
+			}
 		}
 		
-		
+		// Set up a textArea for displaying location info
 		locationNamesTextArea.setText(textToShow);		
 		locationNamesTextArea.setWrapStyleWord(true);
 		locationNamesTextArea.setLineWrap(true);
@@ -610,19 +587,16 @@ public class ClientMainFrame extends JFrame{
 		locationInfoScrollPane.setViewportView(locationNamesTextArea);
 		locationInfoScrollPane.repaint();
 		
+		// Add this scroll pane to the 2D campus map label container
 		this.label_2DCampus.add(locationInfoScrollPane);
 		
-		
-//		this.locationNamesTextArea.repaint();
-//		this.locationInfoScrollPane.repaint();
+		//update the canvas if new components added in
 		this.label_2DCampus.repaint();
 		this.label_2DCampus.validate();
-		
-		
-		
-	
+
 	}
 	
+	//remove the location info scroll panel
 	public void clearLocationInfo()
 	{
 		if(locationNamesTextArea != null)
@@ -633,47 +607,16 @@ public class ClientMainFrame extends JFrame{
 		}
 	}
 	
-	
-	
-	//clean the scene for repainting later 
+	//clean the 3d scene for repainting later 
 	public void cleanScene()
 	{
 		contentBranch.detach();	
 	}
 		
-	
+	//update the 3D scene
 	public void update3DView(Location currentLocation)
 	{
 		setContent(currentLocation);
 	}
 }
 
-//define a simple keyboard event behavior which is extended from Behavior class
-class SimpleBehavior extends Behavior {
-
-   	private TransformGroup targetTG;
-   	private Transform3D rotation = new Transform3D();
-   	private double angle = 0.0;
-
-	// Constructor
-    SimpleBehavior(TransformGroup targetTG) {
-     	this.targetTG = targetTG;
-    }
-
-    // initialize the Behavior
-    // set initial wakeup condition
-    // called when behavior beacomes live
-    public void initialize() {
-     	// set initial wakeup condition
-     	this.wakeupOn(new WakeupOnAWTEvent(KeyEvent.KEY_PRESSED));
-   	}
-
-    // behavior
-    // called by Java 3D when appropriate stimulus occures
-    public void processStimulus(Enumeration criteria) {
-      	angle += 0.03;
-      	rotation.rotY(angle);
-      	targetTG.setTransform(rotation);
-      	this.wakeupOn(new WakeupOnAWTEvent(KeyEvent.KEY_PRESSED));
-    }
-}
