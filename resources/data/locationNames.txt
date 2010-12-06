@@ -1,19 +1,17 @@
-1. Anderson Building
-2. Classroom Office Building
-3. Potter Lab Building
-4. Powers Computer Education Building
-5. Gyte Annex
-6. Gyte Scienece Building
-7. Lawshe Hall
-8. Charlotte R. Riley Child Center
-9. Challenger Learning Center
-10. Student Housing
-11. Fitness & Recreation Center
-12. Student Union & Library
-13. 169th Street Parking Garage
-14. Gene Stratton Porter Hall
-15. University Police
-16. University Services
-17. Schneider Avenue Building
-18. 1247 ¨C 169th Street Building
-19. Community Services Center
+1. Anderson Parking Lot
+2. Anderson Building
+3. Anderson Lounge
+4. CLO Main Enterance
+5. CLO Building
+6. CLO Hall
+7. CLO Potter Junction
+8. Potter Building
+9. Powers Enterance
+10. Gyte Annex
+11. Gyte Underground Lounge
+12. Gyte South Enterance
+13. SUL North Enterance
+14. Library
+15. SUL Cafeteria
+16. SUL South Enterance
+17. Founder's Plaza

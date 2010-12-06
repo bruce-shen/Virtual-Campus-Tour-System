@@ -147,7 +147,6 @@ public class ClientController {
 				 {
 					 if(getDistance(currentPoint, m_Model.getLocationPoints().get(i)) <= distance_Threshold)
 					 {
-						 System.out.println("Location " + i + 1);
 					 	 m_View.change2DMap(i + 1);
 						 break;
 					 }
@@ -176,7 +175,6 @@ public class ClientController {
 
 			public void mouseClicked(MouseEvent e) {
 				Point currentPoint = e.getPoint();
-				
 				for(int i = 0; i < m_Model.getLocationPoints().size(); i++)
 				{
 					if(getDistance(currentPoint, m_Model.getLocationPoints().get(i)) <= distance_Threshold)
@@ -217,6 +215,16 @@ public class ClientController {
 					delta_y = current_y - previous_y;
 					
 					m_View.rotate(previous_rotation_angle + delta_x);
+					if(previous_camera_angle + delta_y >= 600)
+					{
+						previous_camera_angle = 600;
+						delta_y = 0;
+					}
+					if(previous_camera_angle + delta_y <= -500)
+					{
+						previous_camera_angle = -500;
+						delta_y = 0;
+					}
 					m_View.cameraChangeAngle(previous_camera_angle + delta_y);
 				}
 			    	    
@@ -284,8 +292,16 @@ public class ClientController {
 	{
 		//init name with IP
 		try 
-		{
-			m_Model.initUser(InetAddress.getLocalHost().toString());
+		{	
+			String iP = InetAddress.getLocalHost().toString();
+			int tmp_Index = iP.indexOf("-");
+			String computer_Name = iP;
+			if(tmp_Index > 0)
+			{
+				computer_Name = iP.substring(0, tmp_Index);
+			}
+			m_Model.initUser(computer_Name);
+			
 		}
 		catch(Exception e) {
 			e.printStackTrace();

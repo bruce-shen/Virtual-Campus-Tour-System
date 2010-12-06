@@ -426,6 +426,7 @@ public class ClientMainFrame extends JFrame{
 		{
 			viewAngle = 50;
 		}
+
 	    tt.perspective(Math.PI * viewAngle / 180, 1.2f, 0.1f, 2.0f);
 	    view.setLeftProjection(tt);
 	}
