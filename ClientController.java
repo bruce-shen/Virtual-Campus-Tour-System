@@ -292,7 +292,7 @@ public class ClientController {
 	// Init model
 	private void initModel()
 	{
-		//init name with IP
+		//init name with IP(computer's username)
 		try 
 		{	
 			String iP = InetAddress.getLocalHost().toString();
@@ -302,7 +302,8 @@ public class ClientController {
 			{
 				computer_Name = iP.substring(0, tmp_Index);
 			}
-			m_Model.initUser(computer_Name);
+			//m_Model.initUser(computer_Name);
+			m_Model.initUser(System.getProperty("user.name"));
 			
 		}
 		catch(Exception e) {
