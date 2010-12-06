@@ -49,6 +49,7 @@ public class ClientController {
 	private static double delta_x = 0;
 	private static double delta_y = 0;
 	
+	
 	//constructor
 	public ClientController(ClientModel model, ClientMainFrame view)
 	{
@@ -152,7 +153,7 @@ public class ClientController {
 					 }
 					 else
 					 {
-						 m_View.change2DMap(0);
+						 m_View.change2DMap(m_Model.getCurrentUser().getCurrentLocationId());
 					 }
 				 }	
 			  }
@@ -185,6 +186,7 @@ public class ClientController {
 							m_Model.updateUserLocation(i + 1);
 							m_View.cleanScene();
 							m_View.update3DView(m_Model.getCurrentLocation());
+							m_View.change2DMap(i + 1);
 							previous_rotation_angle = 0;
 							previous_camera_angle = 0;
 						}

@@ -56,6 +56,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.Robot;
+import javax.swing.BorderFactory;
 
 /* Java3d packages */
 import com.sun.j3d.utils.applet.MainFrame;
@@ -152,14 +153,15 @@ public class ClientMainFrame extends JFrame{
 			
 		//add a vatar 
 		JLabel label_Avatar = new JLabel("");
-		label_Avatar.setIcon(new ImageIcon("resources/icons/cc.jpg"));
-		label_Avatar.setBounds(5, 0, 89, 105);
+		label_Avatar.setIcon(new ImageIcon("resources/icons/msn.png"));
+		label_Avatar.setBounds(0, 20, 70, 70);
+		label_Avatar.setBorder(BorderFactory.createLineBorder(Color.gray));
 		panel_Info.add(label_Avatar);
 		
 		//add name textfield		
 		textField_Name = new JTextField();
 		textField_Name.setEditable(false);
-		textField_Name.setBounds(79, 25, 164, 27);
+		textField_Name.setBounds(79, 25, 160, 27);
 		panel_Info.add(textField_Name);
 		textField_Name.setColumns(10);
 			
@@ -184,7 +186,7 @@ public class ClientMainFrame extends JFrame{
 			
 		//add the online users panel
 		JPanel panel_Onlineusers = new JPanel();
-		panel_Onlineusers.setBounds(621, 105, 253, 243);
+		panel_Onlineusers.setBounds(625, 105, 253, 250);
 		getContentPane().add(panel_Onlineusers);
 		panel_Onlineusers.setLayout(null);
 			
@@ -319,6 +321,8 @@ public class ClientMainFrame extends JFrame{
 				
 				// Create texture
 				Texture2D mytext=(Texture2D) myloader.getTexture();
+				mytext.setBoundaryModeS(Texture.CLAMP_TO_EDGE);
+				mytext.setBoundaryModeT(Texture.CLAMP_TO_EDGE);
 					
 				// Bound the texture to the appearance
 				apperarance[i] = new Appearance();
