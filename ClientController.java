@@ -149,11 +149,13 @@ public class ClientController {
 					 if(getDistance(currentPoint, m_Model.getLocationPoints().get(i)) <= distance_Threshold)
 					 {
 					 	 m_View.change2DMap(i + 1);
+					 	 m_View.displayLocationInfo(m_Model.getLocationPoints().get(i), m_Model.getLocationNames().get(i), i, m_Model.getOnlineUserNames());
 						 break;
 					 }
 					 else
 					 {
 						 m_View.change2DMap(m_Model.getCurrentUser().getCurrentLocationId());
+						 m_View.clearLocationInfo();
 					 }
 				 }	
 			  }
@@ -192,7 +194,7 @@ public class ClientController {
 						}
 						else if(e.getButton() == MouseEvent.BUTTON3)
 						{
-							m_View.displayLocationInfo(m_Model.getLocationPoints().get(i), m_Model.getLocationNames().get(i), i, m_Model.getOnlineUserNames());
+							//m_View.displayLocationInfo(m_Model.getLocationPoints().get(i), m_Model.getLocationNames().get(i), i, m_Model.getOnlineUserNames());
 						}
 						break;
 					}
@@ -305,6 +307,7 @@ public class ClientController {
 			//m_Model.initUser(computer_Name);
 			m_Model.initUser(System.getProperty("user.name"));
 			
+			
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -316,6 +319,8 @@ public class ClientController {
 	
 	private void initView()
 	{
+		//set initial campus map
+		m_View.change2DMap(1);
 		m_View.updateNameTextField(m_Model.getCurrentUser().getUserName());
 		m_View.updateOnlineUsers(m_Model.getOnlineUserNames(), m_Model.getLocationNames());
 		m_View.update3DView(m_Model.getCurrentLocation());

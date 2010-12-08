@@ -139,7 +139,7 @@ public class ClientMainFrame extends JFrame{
 		//init the main frame
 		setResizable(false);
 		setTitle("Virtual Campus Tour System");
-		setBounds(100, 100, 900, 700);
+		setBounds(100, 100, 895, 695);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 			
@@ -217,7 +217,7 @@ public class ClientMainFrame extends JFrame{
 			
 		//add message panel
 		JPanel panel_Message = new JPanel();
-		panel_Message.setBounds(620, 390, 264, 272);
+		panel_Message.setBounds(620, 394, 264, 272);
 		getContentPane().add(panel_Message);
 		panel_Message.setLayout(null);
 			
@@ -399,7 +399,7 @@ public class ClientMainFrame extends JFrame{
 	    view.setCompatibilityModeEnable(true);
 	    view.setProjectionPolicy(View.PERSPECTIVE_PROJECTION );
 	    Transform3D tt = new Transform3D();
-	    tt.perspective(Math.PI * viewAngle / 180, 1.2f, 0.1f, 2.0f);
+	    tt.perspective(Math.PI * viewAngle / 180, 1.487f, 0.1f, 2.0f);
 	    view.setLeftProjection(tt);
 	    view.addCanvas3D(canvas);
 
@@ -421,9 +421,9 @@ public class ClientMainFrame extends JFrame{
 	{
 		Transform3D tt = new Transform3D();
 		viewAngle += 5 * increaseView;
-		if(viewAngle >= 100)
+		if(viewAngle >= 120)
 		{
-			viewAngle = 100;
+			viewAngle = 120;
 		}
 		
 		if(viewAngle <= 50)
@@ -446,14 +446,14 @@ public class ClientMainFrame extends JFrame{
 	public void cameraChangeAngle(double angle)
 	{
 		Transform3D newLookAt = new Transform3D();
-		if(angle >= 400)
+		if(angle >= 600)
 		{
-			angle = 400;
+			angle = 600;
 		}
 		
-		if(angle <= -400)
+		if(angle <= -600)
 		{
-			angle = - 400;
+			angle = - 600;
 		}
 		newLookAt.lookAt(new Point3d(0,0,0), new Point3d(0, angle / 50, -10), new Vector3d(0, 1, 0));
 	    view.setVpcToEc(newLookAt);
@@ -566,9 +566,15 @@ public class ClientMainFrame extends JFrame{
 		// Set scroll panel's position and size
 		int draw_x = (int)point.getX();
 		int draw_y = (int)point.getY();
-		if(point.getX() >= 400)
+		draw_x += 10;
+		draw_y += 10;
+		if(draw_x >= 400)
 		{
 			draw_x = 400;
+		}
+		if(draw_y >= 150)
+		{
+			draw_y = 150;
 		}
 		locationInfoScrollPane = new JScrollPane((Component) null);
 		locationInfoScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
