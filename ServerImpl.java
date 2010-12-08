@@ -5,6 +5,7 @@
  * @function: the implement of Server interface
  * @author: Hao Shen
  * @version 1.00 2010/11/8 * @modify 1.02 2010/11/18, implement getLocationImageById() function * @modify 1.03 2010/11/19, Hao Shen, implementation of added functions
+ * @modify 2.0  2010/12/08, Hao Shen, final version for final presentation
  */
 
 import java.rmi.*;
@@ -18,14 +19,13 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
 
-
-
 @SuppressWarnings("serial")
 public class ServerImpl extends UnicastRemoteObject implements Server{
 	
 	private ArrayList<User> users = new ArrayList<User>();
 	private ArrayList<Message> messages = new ArrayList<Message>();
 	
+	// Static variabless
 	private static int userIdFlag = 0;
 	private static int messageIdFlag = 0;
 	

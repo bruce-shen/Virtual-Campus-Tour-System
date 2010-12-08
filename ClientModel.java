@@ -6,6 +6,7 @@
  * @author: Hao Shen
  * @version 1.00 2010/11/8
  * @modify 1.01 2010/11/16 * @modify 1.03 2010/11/19, Hao Shen, add onlineusers&message parameters to check the view needs to update or not
+ * @modify 2.0  2010/12/08, Hao Shen, final version for final presentation
  */
 import java.lang.String;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class ClientModel{
 	private ArrayList<String> locationNames;
 	private Date loginDateTime;
 	
-	
+	// Contructor
 	public ClientModel()
 	{
 		initRMI();
@@ -37,6 +38,7 @@ public class ClientModel{
 		loginDateTime = new Date();
 	}
 	
+	// initilize location names by reading from file
 	private void initLocationNames()
 	{
 		locationNames = new ArrayList<String>();
@@ -59,6 +61,7 @@ public class ClientModel{
         }
 	}
 	
+	// init location coordinates
 	private void initLocationsCoordinates()
 	{
 		locationPoints = new ArrayList<Point>();
@@ -83,6 +86,7 @@ public class ClientModel{
         }
 	}
 	
+	// init RMI
 	private void initRMI()
 	{
 		 //load security manager
@@ -91,9 +95,10 @@ public class ClientModel{
 		 //get the remote object from the registry
 	     try
 	     {
+	         //String url = "rmi://192.168.2.101/SERVER";
 	         String url = "rmi://localhost/SERVER";
 	         remoteObj = (Server)Naming.lookup(url);
-			 System.out.println("Got remote object");
+			 //System.out.println("Got remote object");
 			 System.out.println(remoteObj.welcomeInfo());
 	     }
 	     catch (RemoteException exc)
@@ -187,7 +192,6 @@ public class ClientModel{
 		try
 		{
 			currentLocation= new Location(id, remoteObj.getLocationImagesById(id));
-			System.out.println("location initialized with " + "id = " +currentLocation.getLocationId());
 		}
 		catch (Exception e)
 	    {
@@ -318,7 +322,6 @@ public class ClientModel{
 		}
 	}
 	
-
 	public ArrayList<User> getOnlineUserNames()
 	{
 		ArrayList<User> tmpUsers = new ArrayList<User>();
@@ -328,7 +331,6 @@ public class ClientModel{
 		}
 		catch (Exception e)
 	    {
-	        System.out.println("In getOnlineUserNames()");
 			e.printStackTrace();  
 	    }
 		finally

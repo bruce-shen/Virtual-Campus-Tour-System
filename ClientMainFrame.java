@@ -8,6 +8,7 @@
  * @modify 1.01 2010/11/16, Hao Shen
  * @modify 1.02 2010/11/18, Hao Shen, add edit&save buttons, add vertical scroll pane
  * @modify 1.03 2010/11/19, Hao Shen, change onlineusers from JList to JTextArea type, the eneditable for Jlists
+ * @modify 2.0  2010/12/08, Hao Shen, final version for final presentation
  */
  
  /* Java UI packages & Events*/
@@ -97,36 +98,37 @@ public class ClientMainFrame extends JFrame{
 	private JTextArea locationNamesTextArea;
 	
 	/*3D things here*/
-	private VirtualUniverse universe;		//  Virtual Universe object.
-	private javax.media.j3d.Locale locale;	//  Locale of the scene graph.
-	private BranchGroup contentBranch;		// BranchGroup for the Content Branch of the scene
-	private TransformGroup contentsTransGr;	//  TransformGroup  node of the scene contents
-	private BranchGroup viewBranch;// BranchGroup for the View Branch of the scene
-	private ViewPlatform viewPlatform;// ViewPlatform node, defines from where the scene is viewed.
-	private TransformGroup vpTransGr;//  Transform group for the ViewPlatform node
-	private View view;//  View node, defines the View parameters.
+	private VirtualUniverse universe;			// Virtual Universe object.
+	private javax.media.j3d.Locale locale;		// Locale of the scene graph.
+	private BranchGroup contentBranch;			// BranchGroup for the Content Branch of the scene
+	private TransformGroup contentsTransGr;		// TransformGroup  node of the scene contents
+	private BranchGroup viewBranch;				// BranchGroup for the View Branch of the scene
+	private ViewPlatform viewPlatform;			// ViewPlatform node, defines from where the scene is viewed.
+	private TransformGroup vpTransGr;			// Transform group for the ViewPlatform node
+	private View view;							// View node, defines the View parameters.
 	
-	PhysicalBody body;  // A PhysicalBody object can specify the user's head
+	PhysicalBody body;  						// A PhysicalBody object can specify the user's head
 
 	// A PhysicalEnvironment object can specify the physical
 	// environment in which the view will be generated
 	PhysicalEnvironment environment;
 
-	private Canvas3D canvas; // Drawing canvas for 3D rendering
-	private Bounds bounds;  //bounding
+	private Canvas3D canvas; 					// Drawing canvas for 3D rendering
+	private Bounds bounds;  					//bounding
 	
 	/* Static variables*/
-	private static double cameraAngle = 0;
-	private static double rotationAngle = 0;
-	private static double tmpAngle = 0;
-	private static double viewAngle = 85;
+	private static double perspectiveViewAngle = 85;
+	private static final double widthHeightRatio = 1.487;
 	
 	//constructor with a given data model
 	public ClientMainFrame(ClientModel model) {
 		clientModel = model;
 		onlineUsersTableModel = new DefaultTableModel();
 		
-		initialize2D();	
+		// initialize 2D views
+		initialize2D();
+		
+		// initialize 3D view
 		initialize3D();
 	}
 
@@ -276,6 +278,7 @@ public class ClientMainFrame extends JFrame{
 	    bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), Double.MAX_VALUE);
 	}
 	
+	// Init a virtual universe
 	private void setUniverse()
 	{
 		// Creating the VirtualUniverse and the Locale nodes
@@ -283,7 +286,8 @@ public class ClientMainFrame extends JFrame{
 	    locale = new javax.media.j3d.Locale(universe);
 	}
 	  
-	 
+	
+	// Set 3D scene's content
 	private void setContent(Location currentLocation)
 	{
 		//content branch
@@ -399,7 +403,7 @@ public class ClientMainFrame extends JFrame{
 	    view.setCompatibilityModeEnable(true);
 	    view.setProjectionPolicy(View.PERSPECTIVE_PROJECTION );
 	    Transform3D tt = new Transform3D();
-	    tt.perspective(Math.PI * viewAngle / 180, 1.487f, 0.1f, 2.0f);
+	    tt.perspective(Math.PI * perspectiveViewAngle / 180, widthHeightRatio, 0.1f, 2.0f);
 	    view.setLeftProjection(tt);
 	    view.addCanvas3D(canvas);
 
@@ -416,26 +420,26 @@ public class ClientMainFrame extends JFrame{
 	} 
 	
 	
-	// Change the camera's lookAt angle
-	public void changeViewAngle(int increaseView)
+	// Change the camera's perspective view angle with mouse wheel event
+	public void changePerspectiveViewAngle(int increaseView)
 	{
-		Transform3D tt = new Transform3D();
-		viewAngle += 5 * increaseView;
-		if(viewAngle >= 120)
+		Transform3D tmp = new Transform3D();
+		perspectiveViewAngle += 5 * increaseView;
+		if(perspectiveViewAngle >= 120)
 		{
-			viewAngle = 120;
+			perspectiveViewAngle = 120;
 		}
 		
-		if(viewAngle <= 50)
+		if(perspectiveViewAngle <= 50)
 		{
-			viewAngle = 50;
+			perspectiveViewAngle = 50;
 		}
 
-	    tt.perspective(Math.PI * viewAngle / 180, 1.2f, 0.1f, 2.0f);
-	    view.setLeftProjection(tt);
+		tmp.perspective(Math.PI * perspectiveViewAngle / 180, widthHeightRatio, 0.1f, 2.0f);
+	    view.setLeftProjection(tmp);
 	}
 	
-	// Rotate the cube with a given angel
+	// Rotate the cube with a given angle
 	public void rotate(double angle)
 	{
 		Transform3D tmp = new Transform3D();	
@@ -443,90 +447,95 @@ public class ClientMainFrame extends JFrame{
 		contentsTransGr.setTransform(tmp);
 	}
 	
-	public void cameraChangeAngle(double angle)
+	// Change the camera's lookAt view angle
+	public void changeCameraLookAtAngle(double angle)
 	{
 		Transform3D newLookAt = new Transform3D();
-		if(angle >= 600)
-		{
-			angle = 600;
-		}
-		
-		if(angle <= -600)
-		{
-			angle = - 600;
-		}
 		newLookAt.lookAt(new Point3d(0,0,0), new Point3d(0, angle / 50, -10), new Vector3d(0, 1, 0));
 	    view.setVpcToEc(newLookAt);
 	}
 	
+	// Enalbe or disable the editing of the name textfield
 	public void enableNameDiting(boolean status)
 	{
 		textField_Name.setEditable(status);
 	}
 	
+	// Get the name from the name text field
 	public String getNewName()
 	{
 		return textField_Name.getText();
 	}
 	
+	// Add listener  to the submit Button
 	public void addSubmitListener(ActionListener cal) {
         btnSubmit.addActionListener(cal);
     }
 	
+	// Add listner to the editButton
 	public void addEditButtonListener(ActionListener cal) {
         btnEditName.addActionListener(cal);
     }
 	
+	// Add listner to the SavaButton
 	public void addSaveButtonListener(ActionListener cal) {
         btnSave.addActionListener(cal);
     }
 	
-	
+	// Add window closing listener
 	public void addWindowClosingListener(WindowAdapter cal)
 	{
 		this.addWindowListener(cal);
 	}
 	
+	// Add textFiled Listener
 	public void addTextFieldKeyListener(ActionListener cal)
 	{
 		textField_Message.addActionListener(cal);
 	}
 	
+	// Add mouse listener to the 2D campus map
 	public void addMapMouseListener(MouseListener cal)
 	{
 		label_2DCampus.addMouseListener(cal);
 	}
 	
+	// Add mouse motion listener to the 2D campus map
 	public void addMapMouseMotionListener(MouseMotionListener cal)
 	{
 		label_2DCampus.addMouseMotionListener(cal);
 	}
 	
+	// Add mouse motion listener to the 3D canvas
 	public void add3DMouseMotionListener(MouseMotionListener cal)
 	{
 		canvas.addMouseMotionListener(cal);
 	}
 	
+	// Add mouse listner to the 3D canvas
 	public void add3DMouseListener(MouseListener cal)
 	{
 		canvas.addMouseListener(cal);
 	}
 	
+	// Add mouse whell listener to the 3D canvas
 	public void add3DMouseWheelListener(MouseWheelListener cal)
 	{
 		canvas.addMouseWheelListener(cal);
 	}
 	
+	// Get the input message from the textField
 	public String getMessageInput()
 	{
 		return textField_Message.getText();
 	}
 	
+	// Update nameText field
 	public void updateNameTextField(String str)
 	{
 		textField_Name.setText(str);
 	}
-	//udpate message table
+	// Udpate message table
 	public void udpateMessageTable(Date loginDateTime, ArrayList<Message> messages)
 	{
 		String displayMessage = "";
@@ -542,7 +551,7 @@ public class ClientMainFrame extends JFrame{
 	}
 	
 	
-	//update onlineusers table
+	// Update onlineusers table
 	public void updateOnlineUsers(ArrayList<User> users, ArrayList<String> locationNames)
 	{
 		String textToShow = "";
@@ -555,6 +564,7 @@ public class ClientMainFrame extends JFrame{
 		textArea_OnlineUses.setText(textToShow);				
 	}
 
+	// Display location info Scroll panel with mouse event
 	public void displayLocationInfo(Point point, String locationName, int locationId, ArrayList<User> users)
 	{	
 		// Remove the scroll panel first
@@ -612,7 +622,7 @@ public class ClientMainFrame extends JFrame{
 
 	}
 	
-	//remove the location info scroll panel
+	// Remove the location info scroll panel
 	public void clearLocationInfo()
 	{
 		if(locationNamesTextArea != null)
@@ -623,18 +633,20 @@ public class ClientMainFrame extends JFrame{
 		}
 	}
 	
-	//clean the 3d scene for repainting later 
+	// Clean the 3d scene for repainting later 
 	public void cleanScene()
 	{
 		contentBranch.detach();	
 	}
 		
-	//update the 3D scene
+	// Update the 3D scene with a current location object
 	public void update3DView(Location currentLocation)
 	{
 		setContent(currentLocation);
 	}
 	
+	
+	// Map animation with mouse event
 	public void change2DMap(int mapId)
 	{
 		ImageIcon campus = new ImageIcon("resources/imgs/" + mapId + ".jpg");

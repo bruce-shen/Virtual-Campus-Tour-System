@@ -5,6 +5,7 @@
  * @author: Hao Shen 
  * @version 1.00 2010/11/8
  * @version 1.03 2010/11/19
+ * @modify 2.0  2010/12/08, Hao Shen, final version for final presentation
  */
 import java.io.Serializable;
 

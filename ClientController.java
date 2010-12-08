@@ -8,6 +8,7 @@
  * @modify 1.01 2010/11/16, Hao Shen
  * @modify 1.02 2010/11/18, Hao Shen, add edit&save buttons, and listeners of them.
  * @modify 1.03 2010/11/19, Hao Shen, add timer to update view every second if possible
+ * @modify 2.0  2010/12/08, Hao Shen, final version for final presentation
  */
 
  //events hander packages
@@ -39,15 +40,15 @@ public class ClientController {
 	//private properties
 	private ClientModel m_Model;
 	private ClientMainFrame m_View;
-	private static int usersSize = 0;
-	private static double distance_Threshold = 8.0;
-	private static double previous_x = 0;
-	private static double previous_y = 0;
-	
-	private static double previous_rotation_angle = 0;
-	private static double previous_camera_angle = 0;
-	private static double delta_x = 0;
-	private static double delta_y = 0;
+
+	// Static variables
+	private static double distance_Threshold = 8.0;		// the minimum distance between location and current mouse's point
+	private static double previous_x = 0;				// previous x coordinate of mouse	
+	private static double previous_y = 0;				// previous y coordinate of mouse
+	private static double previous_rotation_angle = 0;	// previous rotation angle of cube
+	private static double previous_camera_angle = 0;	// previous camera's lookAt angle
+	private static double delta_x = 0;					// delta_x of mouse movement
+	private static double delta_y = 0;					// delta_y of mouse movement
 	
 	
 	//constructor
@@ -116,6 +117,7 @@ public class ClientController {
 			}
 		});
 		
+		// Add text filed listener
 		m_View.addTextFieldKeyListener(new ActionListener() {
 		
 			public void actionPerformed(ActionEvent e){
@@ -140,6 +142,7 @@ public class ClientController {
 			}
 		});
 		
+		// Add map mouse motion listeners
 		m_View.addMapMouseMotionListener(new MouseMotionListener(){
 			 public void mouseMoved(MouseEvent e) {
 				 Point currentPoint = e.getPoint();
@@ -163,19 +166,18 @@ public class ClientController {
 			  public void mouseDragged(MouseEvent e) {}
 		});
 		
+		// Add map mouse listener
 		m_View.addMapMouseListener(new MouseListener() {
 		
 			public void mousePressed(MouseEvent e) {}
 
 			public void mouseReleased(MouseEvent e) {}
 
-			public void mouseEntered(MouseEvent e) {
-				
-				
-			}
+			public void mouseEntered(MouseEvent e) {}
 
 			public void mouseExited(MouseEvent e) {}
 
+			// When mouse clicks on the 2D map
 			public void mouseClicked(MouseEvent e) {
 				Point currentPoint = e.getPoint();
 				for(int i = 0; i < m_Model.getLocationPoints().size(); i++)
@@ -191,21 +193,20 @@ public class ClientController {
 							m_View.change2DMap(i + 1);
 							previous_rotation_angle = 0;
 							previous_camera_angle = 0;
+							
+							break;
 						}
-						else if(e.getButton() == MouseEvent.BUTTON3)
-						{
-							//m_View.displayLocationInfo(m_Model.getLocationPoints().get(i), m_Model.getLocationNames().get(i), i, m_Model.getOnlineUserNames());
-						}
-						break;
 					}
 					else
 					{
+						// if no location clicked, clean locationi info scroll panel is possible
 						m_View.clearLocationInfo();
 					}
 				}
 			}
 		});
 		
+		// Add mouse motion listener to the 3d canvas
 		m_View.add3DMouseMotionListener(new MouseMotionListener(){
 			 public void mouseMoved(MouseEvent e) {}
 
@@ -229,11 +230,12 @@ public class ClientController {
 						previous_camera_angle = -500;
 						delta_y = 0;
 					}
-					m_View.cameraChangeAngle(previous_camera_angle + delta_y);
+					m_View.changeCameraLookAtAngle(previous_camera_angle + delta_y);
 				}
 			    	    
 		});
 		
+		// Add mouse listener to the 3D canvas
 		m_View.add3DMouseListener(new MouseListener(){
 			public void mousePressed(MouseEvent e) {
 				Point currentPoint = e.getPoint();
@@ -256,17 +258,18 @@ public class ClientController {
 			}
 		});
 		
+		// Add mouse wheel listener to the 3D canvas
 		m_View.add3DMouseWheelListener(new MouseWheelListener(){
 			public void mouseWheelMoved(MouseWheelEvent e)
 			{
 				int notches = e.getWheelRotation();
 				if(notches < 0)
 				{
-					m_View.changeViewAngle(-1);
+					m_View.changePerspectiveViewAngle(-1);
 				}
 				else
 				{
-					m_View.changeViewAngle(1);
+					m_View.changePerspectiveViewAngle(1);
 				}
 			}
 		});
@@ -304,10 +307,10 @@ public class ClientController {
 			{
 				computer_Name = iP.substring(0, tmp_Index);
 			}
+			
 			//m_Model.initUser(computer_Name);
 			m_Model.initUser(System.getProperty("user.name"));
-			
-			
+						
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -317,19 +320,25 @@ public class ClientController {
 		m_Model.setLocation(1);
 	}
 	
+	// init the GUI
 	private void initView()
 	{
-		//set initial campus map
+		// Displays initial campus map
 		m_View.change2DMap(1);
+		
+		// Display the user name
 		m_View.updateNameTextField(m_Model.getCurrentUser().getUserName());
+		
+		// Display online uses panel
 		m_View.updateOnlineUsers(m_Model.getOnlineUserNames(), m_Model.getLocationNames());
+		
+		// Display 3D scene
 		m_View.update3DView(m_Model.getCurrentLocation());
 	}
 	
 }
 
-
-// an inner class for timer functions
+// An inner class for timer functions
 class RemindTask extends TimerTask {
 	
 	private ClientMainFrame view;

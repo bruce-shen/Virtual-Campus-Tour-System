@@ -7,6 +7,7 @@
  * @version 1.00 2010/11/8
  * @modify 1.01 2010/11/16 * @modify 1.02 2010/11/18, change image format to byte[] which can be transfered through RMI
  * @version 1.03 2010/11/19
+ * @modify 2.0  2010/12/08, Hao Shen, final version for final presentation
  */import javax.imageio.ImageIO;  
 import java.io.File;  
 import java.awt.*;  

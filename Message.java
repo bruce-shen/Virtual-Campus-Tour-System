@@ -5,6 +5,7 @@
  *
  * @author: Hao Shen
  * @version 1.03 2010/11/19, Hao Shen. Add this class for management of messages
+ * @modify 2.0  2010/12/08, Hao Shen, final version for final presentation
  */
 
 import java.util.*;
